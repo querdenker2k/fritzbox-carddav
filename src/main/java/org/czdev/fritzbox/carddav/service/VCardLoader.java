@@ -100,29 +100,6 @@ public class VCardLoader {
                     contact.getTelephone().add(telephone);
                 }
             }
-//            if (parse.getAdrs() != null) {
-            for (AdrType adrType : parse.getAdrs()) {
-//                    Address address = new Address();
-//                    address.setContact(contact);
-//                    address.setStreet(adrType.getStreetAddress());
-//                    address.setCity(adrType.getRegion());
-//                    address.setPostalCode(adrType.getPostalCode());
-//                    address.setCountry(adrType.getCountryName());
-//                    StringBuilder sb = new StringBuilder();
-//                    if (adrType.getParams() != null) {
-//                        for (AdrParamType adrParamType : adrType.getParams()) {
-//                            if (sb.length() > 0) {
-//                                sb.append(", ");
-//                            }
-//                            sb.append(adrParamType.getDescription());
-//                        }
-//                        address.setLabel(sb.toString());
-//                    }
-//                    Location location = geocode(address);
-//                    address.setLocation(location);
-//                    contact.getAddressList().add(address);
-//                }
-            }
             logger.fine(String.format("found contact: %s, %s: telephones: %s, addresses: %s", contact.getSurname(), contact.getGivenNames(), contact.getTelephone(), contact.getAddressList()));
             contacts.add(contact);
         }

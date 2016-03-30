@@ -1,5 +1,6 @@
 package org.czdev.fritzbox.carddav.config;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -22,12 +23,19 @@ public class Configuration {
     private final Properties p = new Properties();
 
     private Configuration() {
+    }
+
+    public void init(String file) {
         try {
-            InputStream inputStream = ClassLoader.getSystemResourceAsStream(FILENAME);
-            if (inputStream == null) {
-                throw new IllegalStateException("cannot find config: " + FILENAME);
+            if (file != null) {
+                p.load(new FileInputStream(file));
+            } else {
+                InputStream inputStream = ClassLoader.getSystemResourceAsStream(FILENAME);
+                if (inputStream == null) {
+                    throw new IllegalStateException("cannot find config: " + FILENAME);
+                }
+                this.p.load(inputStream);
             }
-            this.p.load(inputStream);
         } catch (IOException e) {
             throw new IllegalStateException("cannot load configuration: " + FILENAME);
         }

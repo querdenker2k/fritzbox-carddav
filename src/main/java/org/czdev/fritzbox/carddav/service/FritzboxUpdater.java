@@ -2,6 +2,7 @@ package org.czdev.fritzbox.carddav.service;
 
 import de.mapoll.javaAVMTR064.Action;
 import de.mapoll.javaAVMTR064.FritzConnection;
+import de.mapoll.javaAVMTR064.Response;
 import de.mapoll.javaAVMTR064.Service;
 import org.apache.commons.io.output.StringBuilderWriter;
 import org.czdev.fritzbox.carddav.config.Configuration;
@@ -71,20 +72,24 @@ public class FritzboxUpdater {
                 argumentsDelete.put("NewPhonebookID", phonebookId);
                 argumentsDelete.put("NewPhonebookExtraID", "");
                 fc.getService("X_AVM-DE_OnTel:1").getAction("DeletePhonebook").execute(argumentsDelete);
-
-                String phonebookName = configuration.getPropertyAsString(Configuration.KEY_PHONEBOOK);
-                Map<String, Object> arguments = new HashMap<>();
-                arguments.put("NewPhonebookName", phonebookName);
-                arguments.put("NewPhonebookExtraID", "100");
-                fc.getService("X_AVM-DE_OnTel:1").getAction("AddPhonebook").execute(arguments);
             }
         }
+
+        String phonebookName = configuration.getPropertyAsString(Configuration.KEY_PHONEBOOK);
+        Map<String, Object> arguments = new HashMap<>();
+        arguments.put("NewPhonebookName", phonebookName);
+        arguments.put("NewPhonebookExtraID", "100");
+        final Response addPhonebook = fc.getService("X_AVM-DE_OnTel:1").getAction("AddPhonebook").execute(arguments);
+        System.out.println(addPhonebook);
     }
 
     private Integer findPhonebookId(FritzConnection fc, String phonebookName) throws IOException, NoSuchFieldException {
         String newPhonebookList = fc.getService("X_AVM-DE_OnTel:1").getAction("GetPhonebookList").execute().getValueAsString("NewPhonebookList");
         for (String phonebookIdString : newPhonebookList.split(",")) {
-            int phonebookId = Integer.parseInt(phonebookIdString);
+            if (phonebookIdString.isEmpty()) {
+                continue;
+            }
+            Integer phonebookId = Integer.parseInt(phonebookIdString);
             String foundPhonebookName = fc.getService("X_AVM-DE_OnTel:1").getAction("GetPhonebook").execute(Collections.<String, Object>singletonMap("NewPhonebookID", phonebookId)).getValueAsString("NewPhonebookName");
             if (foundPhonebookName.equals(phonebookName)) {
                 return phonebookId;
